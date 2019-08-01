@@ -23,7 +23,6 @@
 //! 
 //! ```
 //! 
-
 use ruspiro_register::define_registers;
 
 pub type Useconds = u64;
