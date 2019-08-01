@@ -1,0 +1,19 @@
+[package]
+name = "ruspiro-timer"
+authors = ["André Borrmann <pspwizard@gmx.de>"]
+version = "0.0.1" # remember to update html_root_url
+description = "This crates provides simple timing functions to pause the current core for a specific amount of time."
+license = "Apache-2.0"
+repository = "https://github.com/RusPiRo/ruspiro-timer/tree/v0.0.1"
+documentation = "https://docs.rs/ruspiro-timer/0.0.1"
+readme = "README.md"
+keywords = ["RusPiRo", "baremetal", "raspberrypi", "timer"]
+categories = ["no-std", "embedded"]
+edition = "2018"
+
+[lib]
+
+[dependencies]
+ruspiro-register = "0.0.2"
+
+[features]
