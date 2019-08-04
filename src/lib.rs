@@ -4,7 +4,7 @@
  * Author: André Borrmann 
  * License: Apache License 2.0
  **********************************************************************************************************************/
-#![doc(html_root_url = "https://docs.rs/ruspiro-timer/0.0.1")]
+#![doc(html_root_url = "https://docs.rs/ruspiro-timer/0.1.0")]
 #![no_std]
 #![feature(asm)]
 //! # Timer functions
@@ -42,18 +42,15 @@ pub fn sleepcycles(cycles: u32) {
 }
 
 // MMIO peripheral base address based on the target family provided with the custom target config file.
-#[cfg(target_family="ruspiro-pi3")]
+#[cfg(feature="ruspiro_pi3")]
 const PERIPHERAL_BASE: u32 = 0x3F00_0000;
-
-#[cfg(not(target_family="ruspiro-pi3"))]
-const PERIPHERAL_BASE: u32 = 0x2000_0000;
 
 // Base address of timer MMIO register
 const TIMER_BASE: u32 = PERIPHERAL_BASE + 0x0000_3000;
 
 define_registers! [
-    TIMERCLO: ReadOnly<u32> @ TIMER_BASE + 0x04 => [],
-    TIMERCHI: ReadOnly<u32> @ TIMER_BASE + 0x08 => []
+    TIMERCLO: ReadOnly<u32> @ TIMER_BASE + 0x04,
+    TIMERCHI: ReadOnly<u32> @ TIMER_BASE + 0x08
 ];
 
 /// Get the current time as free running counter value of the system timer
