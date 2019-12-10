@@ -12,7 +12,7 @@ free-running counter of the Raspberry Pi to provide micro second accurate pause 
 To use the crate just add the following dependency to your ``Cargo.toml`` file:
 ```
 [dependencies]
-ruspiro-timer = "0.1.0"
+ruspiro-timer = "0.3"
 ```
 
 Once done the access to the timer functions is available in your rust files like so:

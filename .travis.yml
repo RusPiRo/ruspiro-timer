@@ -6,19 +6,31 @@ branches:
 
 language: rust
 
+rust:
+# build nightly only for the time beeing
+  - nightly
+
 matrix:
   fast_finish: true
-
   include:
-    - rust: nightly
-      env: 
-        - TARGET=armv7-unknown-linux-gnueabihf
-        - CFLAGS='-std=c11 -mfpu=neon-fp-armv8 -mfloat-abi=hard -march=armv8-a -Wall -O3 -nostartfiles -ffreestanding -mtune=cortex-a53'
-        - RUSTFLAGS='-C target-cpu=cortex-a53 -C target-feature=+a53,+fp-armv8,+v8,+vfp3,+d16,+thumb2,+neon'
+    - name: "build 64Bit"
+      install:
+        - sudo apt-get install gcc-aarch64-linux-gnu gcc-aarch64-linux-gnu
+        - cargo install cargo-xbuild
+        - rustup target add aarch64-unknown-linux-gnu
+        - rustup component add rust-src
+        - sudo chmod ugo+x build.sh
+      script: sed -i 's/path.*=.*\".*", version/version/g' Cargo.toml && ./build.sh 64 travis
 
-script:
-  cargo build --target armv7-unknown-linux-gnueabihf --verbose
+    - name: "build 32Bit"
+      install:
+        - sudo apt-get install gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf
+        - cargo install cargo-xbuild
+        - rustup target add armv7-unknown-linux-gnueabihf
+        - rustup component add rust-src
+        - sudo chmod ugo+x build.sh
+      # remove the path in the dependencies of the cargo file to ensure we use the version from crates.io
+      script: sed -i 's/path.*=.*\".*", version/version/g' Cargo.toml && ./build.sh 32 travis
 
-install:
-  - sudo apt-get install gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf
-  - rustup target add armv7-unknown-linux-gnueabihf
+    - name: "unit tests"
+      script: sed -i 's/path.*=.*\".*", version/version/g' Cargo.toml && cargo test --tests

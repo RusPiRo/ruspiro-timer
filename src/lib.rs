@@ -4,22 +4,22 @@
  * Author: André Borrmann 
  * License: Apache License 2.0
  **********************************************************************************************************************/
-#![doc(html_root_url = "https://docs.rs/ruspiro-timer/0.1.0")]
+#![doc(html_root_url = "https://docs.rs/ruspiro-timer/0.3.0")]
 #![no_std]
 #![feature(asm)]
 //! # Timer functions
 //! 
-//! This crate provides simple timing functions to pause the core for a specific amount of time.
+//! This crate provides simple timing functions to pause the actual core for a specific amount of time.
 //! 
 //! # Usage
 //! 
 //! ```
-//! use rusprio_timer as timer;
+//! use ruspiro_timer as timer;
 //! 
-//! fn demo() {
+//! # fn main() {
 //!     timer::sleep(1000); // pause for 1 milli second
 //!     timer::sleepcycles(200); // pause for 200 CPU cycles
-//! }
+//! # }
 //! 
 //! ```
 //! 
