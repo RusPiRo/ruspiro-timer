@@ -23,7 +23,13 @@
 //! 
 //! ```
 //! 
-use ruspiro_register::define_registers;
+//! # Features
+//! 
+//! - ``ruspiro_pi3`` is active by default and ensures the proper timer MMIO base memory address is
+//! used for Raspberry Pi 3
+//! 
+
+use ruspiro_register::define_mmio_register;
 
 pub type Useconds = u64;
 
@@ -48,9 +54,9 @@ const PERIPHERAL_BASE: u32 = 0x3F00_0000;
 // Base address of timer MMIO register
 const TIMER_BASE: u32 = PERIPHERAL_BASE + 0x0000_3000;
 
-define_registers! [
-    TIMERCLO: ReadOnly<u32> @ TIMER_BASE + 0x04,
-    TIMERCHI: ReadOnly<u32> @ TIMER_BASE + 0x08
+define_mmio_register! [
+    TIMERCLO<ReadOnly<u32>@(TIMER_BASE + 0x04)>,
+    TIMERCHI<ReadOnly<u32>@(TIMER_BASE + 0x08)>
 ];
 
 /// Get the current time as free running counter value of the system timer
