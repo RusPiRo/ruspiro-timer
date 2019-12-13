@@ -19,7 +19,7 @@ Once done the access to the timer functions is available in your rust files like
 ```
 use rusprio_timer as timer;
 
-fn demo() {
+fn foo() {
     timer::sleep(1000); // pause for 1 milli second
     timer::sleepcycles(200); // pause for 200 CPU cycles
 }

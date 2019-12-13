@@ -1,35 +1,35 @@
-/*********************************************************************************************************************** 
+/***********************************************************************************************************************
  * Copyright (c) 2019 by the authors
- * 
- * Author: André Borrmann 
+ *
+ * Author: André Borrmann
  * License: Apache License 2.0
  **********************************************************************************************************************/
 #![doc(html_root_url = "https://docs.rs/ruspiro-timer/0.3.0")]
 #![no_std]
 #![feature(asm)]
 //! # Timer functions
-//! 
+//!
 //! This crate provides simple timing functions to pause the actual core for a specific amount of time.
-//! 
+//!
 //! # Usage
-//! 
-//! ```
+//!
+//! ```no_run
 //! use ruspiro_timer as timer;
-//! 
-//! # fn main() {
+//!
+//! fn foo() {
 //!     timer::sleep(1000); // pause for 1 milli second
 //!     timer::sleepcycles(200); // pause for 200 CPU cycles
-//! # }
-//! 
+//! }
+//!
 //! ```
-//! 
+//!
 //! # Features
-//! 
+//!
 //! - ``ruspiro_pi3`` is active by default and ensures the proper timer MMIO base memory address is
 //! used for Raspberry Pi 3
-//! 
+//!
 
-use ruspiro_register::define_mmio_register;
+use ruspiro_register::{define_mmio_register, system::nop};
 
 pub type Useconds = u64;
 
@@ -37,18 +37,18 @@ pub type Useconds = u64;
 pub fn sleep(usec: Useconds) {
     let wait_until = now() + usec;
 
-    while !is_due(wait_until) { };
+    while !is_due(wait_until) {}
 }
 
 /// Pause the current execution for the given amount of CPU cycles
 pub fn sleepcycles(cycles: u32) {
     for _ in 0..cycles {
-        unsafe { asm!("NOP") };
+        nop();
     }
 }
 
 // MMIO peripheral base address based on the target family provided with the custom target config file.
-#[cfg(feature="ruspiro_pi3")]
+#[cfg(feature = "ruspiro_pi3")]
 const PERIPHERAL_BASE: u32 = 0x3F00_0000;
 
 // Base address of timer MMIO register
