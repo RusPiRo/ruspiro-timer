@@ -2,12 +2,12 @@
 # It is not intended for manual editing.
 [[package]]
 name = "ruspiro-register"
-version = "0.3.1"
+version = "0.4.0"
 
 [[package]]
 name = "ruspiro-timer"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
- "ruspiro-register 0.3.1",
+ "ruspiro-register 0.4.0",
 ]
 
