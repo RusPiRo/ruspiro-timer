@@ -99,12 +99,12 @@ static SCHEDULE: Singleton<Option<Schedules>> = Singleton::new(None);
 ///     let mut counter = 10;
 ///     // schedule a function that prints the value of the variable at the time of beeing scheduled
 ///     // after 1 second
-///     schedule(1_000, move || println!("Value when scheduled: {}", counter));
+///     schedule(Mseconds(1_000), move || println!("Value when scheduled: {}", counter));
 ///     counter += 10;
 ///     // print the actual value of the variable as processing continues
 ///     println!("actual value: {}", counter);
 ///     // sleep to wait for the scheduled function to get executed (this is in micro seconds!)
-///     sleep(1_500_000);
+///     sleep(Useconds(1_500_000));
 /// # }
 /// ```
 /// The expected output of this example would be:

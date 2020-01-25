@@ -36,6 +36,14 @@ pub struct Useconds(pub u64);
 pub struct Mseconds(pub u64);
 
 /// Pause the current execution for the given amount of micro seconds
+/// # Example
+/// ```no_run
+/// # use ruspiro_timer::*;
+/// # fn doc() {
+/// // pause the execution for 1 second
+/// sleep(Useconds(1_000_000));
+/// # }
+/// ```
 pub fn sleep(usec: Useconds) {
     let wait_until = Useconds(now().0 + usec.0);
 
@@ -43,6 +51,13 @@ pub fn sleep(usec: Useconds) {
 }
 
 /// Pause the current execution for the given amount of CPU cycles
+/// # Example
+/// ```no_run
+/// # use ruspiro_timer::*;
+/// # fn doc() {
+/// sleepcycles(1_000);
+/// # }
+/// ```
 pub fn sleepcycles(cycles: u32) {
     for _ in 0..cycles {
         nop();
