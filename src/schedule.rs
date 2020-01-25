@@ -105,7 +105,7 @@ static SCHEDULE: Singleton<Option<Schedules>> = Singleton::new(None);
 /// # }
 /// ```
 /// The expected output of this example would be:
-/// ```
+/// ```ignore
 /// actual value: 20
 /// Value when scheduled: 10
 /// ```
