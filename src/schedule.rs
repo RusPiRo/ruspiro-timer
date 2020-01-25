@@ -1,30 +1,26 @@
-/*************************************************************************************************** 
+/***************************************************************************************************
  * Copyright (c) 2019 by the authors
- * 
- * Author: André Borrmann 
+ *
+ * Author: André Borrmann
  * License: Apache License 2.0
  **************************************************************************************************/
 
 //! # Schedule Functions
-//! 
+//!
 //! Allowing functions/closures to be scheduled with a specific delay. The scheduling is based on
 //! timer interrupts. When using this functionality ensure the interrupts are properly initialized
 //! and globally activated using the [``ruspiro_interrupt`` crate](https://crates.io/crates/ruspiro_interrupt)
-//! 
+//!
 
 extern crate alloc;
-use alloc::{
-    collections::BTreeMap,
-    boxed::Box,
-    vec::Vec,
-};
-use core::{
-    sync::atomic::{AtomicUsize, AtomicU64, Ordering},
-    cell::UnsafeCell,
-};
-use ruspiro_singleton::*;
-use ruspiro_interrupt::*;
 use crate::*;
+use alloc::{boxed::Box, collections::BTreeMap, vec::Vec};
+use core::{
+    cell::UnsafeCell,
+    sync::atomic::{AtomicU64, AtomicUsize, Ordering},
+};
+use ruspiro_interrupt::*;
+use ruspiro_singleton::*;
 
 type FunctionScheduleList = BTreeMap<u64, UnsafeCell<Option<Box<dyn FnOnce() + 'static + Send>>>>;
 
@@ -55,10 +51,10 @@ impl Schedules {
     }
 
     /// Shrink the list of scheduled functions to get rid of all what has been processed already.
-    /// 
+    ///
     /// # Safety
     /// This is safe when this function is called when it is ensured that no concurrent processing
-    /// tries actually to index into the values or keys of the list, while shrinking. A typical 
+    /// tries actually to index into the values or keys of the list, while shrinking. A typical
     /// scenario would be, when we are about to add a new entry to the list and see that the index
     /// for done items is equal to the index of due items, which means that there will be no interrupt
     /// triggered that may want to execute a scheduled function.
@@ -90,7 +86,7 @@ static SCHEDULE: Singleton<Option<Schedules>> = Singleton::new(None);
 /// timer interrupt, so heavy computation should be avoided. However, it could be used to signal that
 /// a heavy processing can continue in the context outside the actual interrupt using a ``Semaphore``
 /// or a ``Channel``
-/// 
+///
 /// # Example
 /// ```no_run
 /// # use ruspiro_timer::*;
@@ -113,7 +109,7 @@ static SCHEDULE: Singleton<Option<Schedules>> = Singleton::new(None);
 /// Value when scheduled: 10
 /// ```
 pub fn schedule<F: FnOnce() + 'static + Send>(delay_ms: crate::Mseconds, function: F) {
-    // calculate the time this function shall be scheduled based on the current time and the 
+    // calculate the time this function shall be scheduled based on the current time and the
     // requested delay given in milli seconds
     let due = now().0 + delay_ms.0 * 1000;
     // take the list and add the new entry
@@ -126,7 +122,8 @@ pub fn schedule<F: FnOnce() + 'static + Send>(delay_ms: crate::Mseconds, functio
             // timer value ...
             SYS_TIMERCS::Register.write_value(SYS_TIMERCS::M1::MATCH);
             // and activate the timer interrupts to be dispatched
-            IRQ_MANAGER.take_for(|mgr: &mut InterruptManager| mgr.activate(Interrupt::SystemTimer1));
+            IRQ_MANAGER
+                .take_for(|mgr: &mut InterruptManager| mgr.activate(Interrupt::SystemTimer1));
         }
 
         if let Some(ref mut schedules) = schedules.as_mut() {
@@ -139,10 +136,14 @@ pub fn schedule<F: FnOnce() + 'static + Send>(delay_ms: crate::Mseconds, functio
             if done_index > 0 && due_index == done_index {
                 // as we have mutual exclusive access here there is no other way items could be added
                 // so once the done index equals the due index we can safely shrink the list
-                unsafe { schedules.shrink(); }
+                unsafe {
+                    schedules.shrink();
+                }
             };
 
-            schedules.schedule_list.insert(due, UnsafeCell::new(Some(Box::new(function))));
+            schedules
+                .schedule_list
+                .insert(due, UnsafeCell::new(Some(Box::new(function))));
             // now that we have added the new function check if we need to adjust the already set match
             // value for the interrupt to be raised
             let next_due = schedules.next_due.load(Ordering::Acquire);
@@ -177,7 +178,7 @@ fn timer_handler() {
                 let function_cell = functions[next_idx];
                 // now we have the cell containing the function to be called
                 // accessing this mutably is safe as we are now the only one accessing this entry
-                // due to the fact that we have atomically adjusted the index into the list, so any 
+                // due to the fact that we have atomically adjusted the index into the list, so any
                 // other core will use a different index...
                 let function = function_cell.get();
                 // take the function out of the option
