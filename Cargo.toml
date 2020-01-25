@@ -22,7 +22,5 @@ ruspiro-register = { path = "../register", version = "0.4" }
 ruspiro-interrupt = { path = "../interrupt", version = "0.3" }
 ruspiro-singleton = { path = "../singleton", version = "0.3" }
 
-ruspiro-console = { path = "../console", version = "0.3" }
-
 [features]
 ruspiro_pi3 = ["ruspiro-interrupt/ruspiro_pi3"]
