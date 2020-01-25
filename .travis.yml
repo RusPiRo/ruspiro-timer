@@ -19,8 +19,11 @@ matrix:
         - cargo install cargo-xbuild
         - rustup target add aarch64-unknown-linux-gnu
         - rustup component add rust-src
+        - rustup component add llvm-tools-preview
         - sudo chmod ugo+x build.sh
-      script: sed -i 's/path.*=.*".*", version/version/g' Cargo.toml && ./build.sh 64 travis
+        # remove local path in the dependencies of the cargo file to ensure we use the version from crates.io
+        - sed -i 's/path.*=.*"\.\{2\}.*", version/version/g' Cargo.toml
+      script: ./build.sh 64 travis
 
     - name: "build 32Bit"
       install:
@@ -28,9 +31,20 @@ matrix:
         - cargo install cargo-xbuild
         - rustup target add armv7-unknown-linux-gnueabihf
         - rustup component add rust-src
+        - rustup component add llvm-tools-preview
         - sudo chmod ugo+x build.sh
-      # remove the path in the dependencies of the cargo file to ensure we use the version from crates.io
-      script: sed -i 's/path.*=.*".*", version/version/g' Cargo.toml && ./build.sh 32 travis
+        - sed -i 's/path.*=.*"\.\{2\}.*", version/version/g' Cargo.toml
+      # remove local path in the dependencies of the cargo file to ensure we use the version from crates.io
+      script: ./build.sh 32 travis
 
     - name: "unit tests"
-      script: sed -i 's/path.*=.*".*", version/version/g' Cargo.toml && cargo test --tests
+      install:
+        # remove local path in the dependencies of the cargo file to ensure we use the version from crates.io
+        - sed -i 's/path.*=.*"\.\{2\}.*", version/version/g' Cargo.toml
+      script: cargo test --tests --features ruspiro_pi3
+
+    - name: "doc tests"
+      install:
+        # remove local path in the dependencies of the cargo file to ensure we use the version from crates.io
+        - sed -i 's/path.*=.*"\.\{2\}.*", version/version/g' Cargo.toml
+      script: cargo test --doc --features ruspiro_pi3

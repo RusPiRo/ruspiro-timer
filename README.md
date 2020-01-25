@@ -8,20 +8,35 @@ free-running counter of the Raspberry Pi to provide micro second accurate pause 
 [![Documentation](https://docs.rs/ruspiro-timer/badge.svg)](https://docs.rs/ruspiro-timer)
 [![License](https://img.shields.io/crates/l/ruspiro-timer.svg)](https://github.com/RusPiRo/ruspiro-timer#license)
 
+## Features
+Feature         | Description
+----------------|------------------------------------------------------------------------------
+``ruspiro_pi3`` | active to use the proper timer MMIO base memory address for Raspberry Pi 3 when accessing the system timer peripheral
+
+
 ## Usage
 To use the crate just add the following dependency to your ``Cargo.toml`` file:
-```
+```toml
 [dependencies]
-ruspiro-timer = "0.3"
+ruspiro-timer = "0.4"
 ```
 
 Once done the access to the timer functions is available in your rust files like so:
-```
-use rusprio_timer as timer;
+```rust
+use rusprio_timer:*;
 
 fn foo() {
-    timer::sleep(1000); // pause for 1 milli second
-    timer::sleepcycles(200); // pause for 200 CPU cycles
+    sleep(Useconds(1_000)); // pause for 1 millisecond
+    sleepcycles(Useconds(200)); // pause for 200 CPU cycles
+}
+```
+
+Scheduling the execution of a function/closure is as simple as this:
+```rust
+use ruspiro_timer::*;
+
+fn foo() {
+    schedule(Mseconds(100), || println!("delayed execution")); // print after 100 milliseconds
 }
 ```
 

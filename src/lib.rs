@@ -1,80 +1,85 @@
-/***********************************************************************************************************************
+/***************************************************************************************************
  * Copyright (c) 2019 by the authors
  *
  * Author: André Borrmann
  * License: Apache License 2.0
- **********************************************************************************************************************/
-#![doc(html_root_url = "https://docs.rs/ruspiro-timer/0.3.0")]
-#![no_std]
+ **************************************************************************************************/
+#![doc(html_root_url = "https://docs.rs/ruspiro-timer/0.4.0")]
+#![cfg_attr(not(any(test, doctest)), no_std)]
 #![feature(asm)]
 //! # Timer functions
 //!
 //! This crate provides simple timing functions to pause the actual core for a specific amount of time.
+//! It is also possible to delay function/closure execution. This is based on system timer interrupts.
 //!
-//! # Usage
-//!
-//! ```no_run
-//! use ruspiro_timer as timer;
-//!
-//! fn foo() {
-//!     timer::sleep(1000); // pause for 1 milli second
-//!     timer::sleepcycles(200); // pause for 200 CPU cycles
-//! }
-//!
-//! ```
 //!
 //! # Features
-//!
-//! - ``ruspiro_pi3`` is active by default and ensures the proper timer MMIO base memory address is
-//! used for Raspberry Pi 3
+//! Feature         | Description
+//! ----------------|------------------------------------------------------------------------------
+//! ``ruspiro_pi3`` | active to use the proper timer MMIO base memory address for Raspberry Pi 3 when accessing the system timer peripheral
 //!
 
-use ruspiro_register::{define_mmio_register, system::nop};
+use ruspiro_register::system::nop;
 
-pub type Useconds = u64;
+mod interface;
+use interface::*;
+
+mod schedule;
+pub use schedule::schedule;
+
+/// Type representing micro-seconds
+#[derive(Copy, Clone)]
+pub struct Useconds(pub u64);
+
+/// Type representing milli-seconds
+#[derive(Copy, Clone)]
+pub struct Mseconds(pub u64);
 
 /// Pause the current execution for the given amount of micro seconds
+/// # Example
+/// ```no_run
+/// # use ruspiro_timer::*;
+/// # fn doc() {
+/// // pause the execution for 1 second
+/// sleep(Useconds(1_000_000));
+/// # }
+/// ```
 pub fn sleep(usec: Useconds) {
-    let wait_until = now() + usec;
+    let wait_until = Useconds(now().0 + usec.0);
 
     while !is_due(wait_until) {}
 }
 
 /// Pause the current execution for the given amount of CPU cycles
+/// # Example
+/// ```no_run
+/// # use ruspiro_timer::*;
+/// # fn doc() {
+/// sleepcycles(1_000);
+/// # }
+/// ```
 pub fn sleepcycles(cycles: u32) {
     for _ in 0..cycles {
         nop();
     }
 }
 
-// MMIO peripheral base address based on the target family provided with the custom target config file.
-#[cfg(feature = "ruspiro_pi3")]
-const PERIPHERAL_BASE: u32 = 0x3F00_0000;
-
-// Base address of timer MMIO register
-const TIMER_BASE: u32 = PERIPHERAL_BASE + 0x0000_3000;
-
-define_mmio_register! [
-    TIMERCLO<ReadOnly<u32>@(TIMER_BASE + 0x04)>,
-    TIMERCHI<ReadOnly<u32>@(TIMER_BASE + 0x08)>
-];
-
 /// Get the current time as free running counter value of the system timer
-fn now() -> Useconds {
-    let t_low = TIMERCLO::Register.get() as u64;
-    let t_high = TIMERCHI::Register.get() as u64;
+pub fn now() -> Useconds {
+    let t_low = SYS_TIMERCLO::Register.get() as u64;
+    let t_high = SYS_TIMERCHI::Register.get() as u64;
 
-    (t_high << 32) | t_low
+    Useconds((t_high << 32) | t_low)
 }
 
 /// Compare the given time as free running counter value with the current time.
 /// Returns true if the current time is later than the time passed into this function.
 fn is_due(time: Useconds) -> bool {
-    if time == 0 {
+    if time.0 == 0 {
         // if no valid time is given, time is always due
         true
     } else {
         // returns true if we have reached the current time (counter)
-        now() >= time
+        now().0 >= time.0
     }
 }

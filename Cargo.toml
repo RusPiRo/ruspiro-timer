@@ -1,21 +1,26 @@
 [package]
 name = "ruspiro-timer"
 authors = ["André Borrmann <pspwizard@gmx.de>"]
-version = "0.3.0" # remember to update html_root_url
+version = "0.4.0" # remember to update html_root_url
 description = "This crates provides simple timing functions to pause the current core for a specific amount of time."
 license = "Apache-2.0"
-repository = "https://github.com/RusPiRo/ruspiro-timer/tree/v0.3.0"
-documentation = "https://docs.rs/ruspiro-timer/0.3.0"
+repository = "https://github.com/RusPiRo/ruspiro-timer/tree/v0.4.0"
+documentation = "https://docs.rs/ruspiro-timer/0.4.0"
 readme = "README.md"
 keywords = ["RusPiRo", "baremetal", "raspberrypi", "timer"]
 categories = ["no-std", "embedded"]
 edition = "2018"
 
+[badges]
+travis-ci = { repository = "RusPiRo/ruspiro-timer", branch = "master" }
+maintenance = { status = "actively-developed" }
+
 [lib]
 
 [dependencies]
-ruspiro-register = { path = "../register", version = "0.3" }
+ruspiro-register = { path = "../register", version = "0.4" }
+ruspiro-interrupt = { path = "../interrupt", version = "0.3" }
+ruspiro-singleton = { path = "../singleton", version = "0.3" }
 
 [features]
-default = ["ruspiro_pi3"]
-ruspiro_pi3 = []
+ruspiro_pi3 = ["ruspiro-interrupt/ruspiro_pi3"]
