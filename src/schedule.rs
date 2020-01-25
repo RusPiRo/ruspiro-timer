@@ -24,8 +24,7 @@ use core::{
 };
 use ruspiro_singleton::*;
 use ruspiro_interrupt::*;
-use crate::interface::*;
-use ruspiro_console::*;
+use crate::*;
 
 type FunctionScheduleList = BTreeMap<u64, UnsafeCell<Option<Box<dyn FnOnce() + 'static + Send>>>>;
 
@@ -85,9 +84,13 @@ impl Schedules {
 static SCHEDULE: Singleton<Option<Schedules>> = Singleton::new(None);
 
 /// Schedule a function for delayed execution with a millisecond offset relative to the time of the
-/// execution of this function. The function scheduled will be executed in the context of the system
+/// execution of this function.
+/// ## Hint:
+/// The function scheduled will be executed in the context of the system
 /// timer interrupt, so heavy computation should be avoided. However, it could be used to signal that
-/// a heavy processing can continue in the context outside the actual interrupt.
+/// a heavy processing can continue in the context outside the actual interrupt using a ``Semaphore``
+/// or a ``Channel``
+/// 
 /// # Example
 /// ```no_run
 /// # use ruspiro_timer::*;
@@ -109,10 +112,10 @@ static SCHEDULE: Singleton<Option<Schedules>> = Singleton::new(None);
 /// actual value: 20
 /// Value when scheduled: 10
 /// ```
-pub fn schedule<F: FnOnce() + 'static + Send>(delay_ms: u64, function: F) {
+pub fn schedule<F: FnOnce() + 'static + Send>(delay_ms: crate::Mseconds, function: F) {
     // calculate the time this function shall be scheduled based on the current time and the 
     // requested delay given in milli seconds
-    let due = crate::now() + delay_ms * 1000;
+    let due = now().0 + delay_ms.0 * 1000;
     // take the list and add the new entry
     SCHEDULE.take_for(|schedules: &mut Option<Schedules>| {
         if schedules.is_none() {
@@ -145,7 +148,7 @@ pub fn schedule<F: FnOnce() + 'static + Send>(delay_ms: u64, function: F) {
             let next_due = schedules.next_due.load(Ordering::Acquire);
             // on first entry, when the current next due is after the new due
             // or when the current next_due is already in the past, set a new next due
-            if next_due == 0 || due < next_due || next_due < crate::now() {
+            if next_due == 0 || due < next_due || next_due < now().0 {
                 schedules.next_due.store(due, Ordering::Release);
                 SYS_TIMERC1::Register.set(due as u32);
             };

@@ -15,8 +15,10 @@ use ruspiro_register::define_mmio_register;
 const PERIPHERAL_BASE: u32 = 0x3F00_0000;
 
 // Base address of system timer MMIO register
+#[allow(dead_code)]
 const SYS_TIMER_BASE: u32 = PERIPHERAL_BASE + 0x3000;
 // Base address of ARM timer MMIO register
+#[allow(dead_code)]
 const ARM_TIMER_BASE: u32 = PERIPHERAL_BASE + 0xB000;
 
 // Define the MMIO timer register
