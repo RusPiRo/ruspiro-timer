@@ -6,6 +6,7 @@
  **************************************************************************************************/
 
 //! # Schedule Functions
+//! 
 //! Allowing functions/closures to be scheduled with a specific delay. The scheduling is based on
 //! timer interrupts. When using this functionality ensure the interrupts are properly initialized
 //! and globally activated using the [``ruspiro_interrupt`` crate](https://crates.io/crates/ruspiro_interrupt)
@@ -26,12 +27,14 @@ use ruspiro_interrupt::*;
 use crate::interface::*;
 use ruspiro_console::*;
 
+type FunctionScheduleList = BTreeMap<u64, UnsafeCell<Option<Box<dyn FnOnce() + 'static + Send>>>>;
+
 /// Structure to contain the data needed to "manage" the functions to be scheduled
 struct Schedules {
     /// Timer value for the very next function to be executed
     pub next_due: AtomicU64,
     /// Sorted list of function to be executed. The key is the timer value when they are due
-    pub schedule_list: BTreeMap<u64, UnsafeCell<Option<Box<dyn FnOnce() + 'static + Send>>>>,
+    pub schedule_list: FunctionScheduleList,
     /// index into the schedule list pointing to the next due entry that will be executed once
     /// the timer interrupt is triggered the next time
     pub due_index: AtomicUsize,
@@ -52,7 +55,8 @@ impl Schedules {
         }
     }
 
-    /// Shrink the list of scheduled functions to get rid of all what has been processed already
+    /// Shrink the list of scheduled functions to get rid of all what has been processed already.
+    /// 
     /// # Safety
     /// This is safe when this function is called when it is ensured that no concurrent processing
     /// tries actually to index into the values or keys of the list, while shrinking. A typical 
@@ -108,7 +112,7 @@ static SCHEDULE: Singleton<Option<Schedules>> = Singleton::new(None);
 pub fn schedule<F: FnOnce() + 'static + Send>(delay_ms: u64, function: F) {
     // calculate the time this function shall be scheduled based on the current time and the 
     // requested delay given in milli seconds
-    let due = crate::now() + delay * 1000;
+    let due = crate::now() + delay_ms * 1000;
     // take the list and add the new entry
     SCHEDULE.take_for(|schedules: &mut Option<Schedules>| {
         if schedules.is_none() {
@@ -139,11 +143,12 @@ pub fn schedule<F: FnOnce() + 'static + Send>(delay_ms: u64, function: F) {
             // now that we have added the new function check if we need to adjust the already set match
             // value for the interrupt to be raised
             let next_due = schedules.next_due.load(Ordering::Acquire);
-            if next_due == 0 || due < next_due {
+            // on first entry, when the current next due is after the new due
+            // or when the current next_due is already in the past, set a new next due
+            if next_due == 0 || due < next_due || next_due < crate::now() {
                 schedules.next_due.store(due, Ordering::Release);
                 SYS_TIMERC1::Register.set(due as u32);
             };
-            info!("Schedule size: {}", schedules.schedule_list.len());
         };
     });
 }
@@ -165,7 +170,7 @@ fn timer_handler() {
                     return;
                 }
 
-                let functions: Vec<&UnsafeCell<Option<Box<dyn FnOnce() + 'static + Send>>>> = schedules.schedule_list.values().collect();
+                let functions: Vec<_> = schedules.schedule_list.values().collect();
                 let function_cell = functions[next_idx];
                 // now we have the cell containing the function to be called
                 // accessing this mutably is safe as we are now the only one accessing this entry
