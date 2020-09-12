@@ -4,9 +4,9 @@
  * Author: André Borrmann
  * License: Apache License 2.0
  **************************************************************************************************/
-#![doc(html_root_url = "https://docs.rs/ruspiro-timer/0.4.0")]
+#![doc(html_root_url = "https://docs.rs/ruspiro-timer/0.4.1")]
 #![cfg_attr(not(any(test, doctest)), no_std)]
-#![feature(asm)]
+#![feature(llvm_asm)]
 //! # Timer functions
 //!
 //! This crate provides simple timing functions to pause the actual core for a specific amount of time.
