@@ -1,4 +1,9 @@
 # Changelog
+## :banana: v0.4.1
+  - ### :detective: Fixes
+    - remove `asm!` macro usages and replace with `llvm_asm!`
+    - use `cargo make` to stabilize cross-platform builds
+
 ## :pizza: v0.4.0
   - ### :bulb: Features
     - Introduce the possibility to schedule function/closure execution with a delay in multiples of milli seconds relative to the current time of execution.

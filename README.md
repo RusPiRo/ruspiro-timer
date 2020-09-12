@@ -13,15 +13,16 @@ Feature         | Description
 ----------------|------------------------------------------------------------------------------
 ``ruspiro_pi3`` | active to use the proper timer MMIO base memory address for Raspberry Pi 3 when accessing the system timer peripheral
 
-
 ## Usage
 To use the crate just add the following dependency to your ``Cargo.toml`` file:
+
 ```toml
 [dependencies]
 ruspiro-timer = "0.4"
 ```
 
 Once done the access to the timer functions is available in your rust files like so:
+
 ```rust
 use rusprio_timer:*;
 
@@ -32,6 +33,7 @@ fn foo() {
 ```
 
 Scheduling the execution of a function/closure is as simple as this:
+
 ```rust
 use ruspiro_timer::*;
 
@@ -41,4 +43,5 @@ fn foo() {
 ```
 
 ## License
-Licensed under Apache License, Version 2.0, ([LICENSE](LICENSE) or http://www.apache.org/licenses/LICENSE-2.0)
+
+Licensed under Apache License, Version 2.0, ([LICENSE](LICENSE) or [http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0))
