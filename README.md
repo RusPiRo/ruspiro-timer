@@ -9,11 +9,13 @@ free-running counter of the Raspberry Pi to provide micro second accurate pause 
 [![License](https://img.shields.io/crates/l/ruspiro-timer.svg)](https://github.com/RusPiRo/ruspiro-timer#license)
 
 ## Features
+
 Feature         | Description
 ----------------|------------------------------------------------------------------------------
 ``ruspiro_pi3`` | active to use the proper timer MMIO base memory address for Raspberry Pi 3 when accessing the system timer peripheral
 
 ## Usage
+
 To use the crate just add the following dependency to your ``Cargo.toml`` file:
 
 ```toml
@@ -28,7 +30,7 @@ use rusprio_timer:*;
 
 fn foo() {
     sleep(Useconds(1_000)); // pause for 1 millisecond
-    sleepcycles(Useconds(200)); // pause for 200 CPU cycles
+    sleepcycles(200); // pause for 200 CPU cycles
 }
 ```
 
