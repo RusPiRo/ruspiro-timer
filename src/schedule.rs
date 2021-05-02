@@ -18,11 +18,12 @@ use alloc::{boxed::Box, collections::BTreeMap, vec::Vec};
 use core::{
     cell::UnsafeCell,
     sync::atomic::{AtomicU64, AtomicUsize, Ordering},
+    time::Duration,
 };
-use ruspiro_interrupt::*;
+use ruspiro_interrupt::{self as irq, IrqHandler, IsrSender, Interrupt};
 use ruspiro_singleton::*;
 
-type FunctionScheduleList = BTreeMap<u64, UnsafeCell<Option<Box<dyn FnOnce() + 'static + Send>>>>;
+type FunctionScheduleList = BTreeMap<Duration, UnsafeCell<Option<Box<dyn FnOnce() + 'static + Send>>>>;
 
 /// Structure to contain the data needed to "manage" the functions to be scheduled
 struct Schedules {
@@ -69,6 +70,10 @@ impl Schedules {
     }
 }
 
+// TODO: is it really safe to say Schedules are Send and Sync just the way they are defined?
+unsafe impl Send for Schedules {}
+unsafe impl Sync for Schedules {}
+
 /// The global static carrying the list of scheduled functions. The type looks a bit arkward at first
 /// look but is needed to fulfill the following reqirements and constrains
 /// 1. We need mutual exclusive access to the sorted list to add new scheduled functions to it
@@ -108,12 +113,12 @@ static SCHEDULE: Singleton<Option<Schedules>> = Singleton::new(None);
 /// actual value: 20
 /// Value when scheduled: 10
 /// ```
-pub fn schedule<F: FnOnce() + 'static + Send>(delay_ms: crate::Mseconds, function: F) {
+pub fn schedule<F: FnOnce() + 'static + Send>(delay: Duration, function: F) {
     // calculate the time this function shall be scheduled based on the current time and the
     // requested delay given in milli seconds
-    let due = now().0 + delay_ms.0 * 1000;
+    let due = now() + delay;
     // take the list and add the new entry
-    SCHEDULE.take_for(|schedules: &mut Option<Schedules>| {
+    SCHEDULE.with_mut(|schedules: &mut Option<Schedules>| {
         if schedules.is_none() {
             // when the first function get's to be scheduled create the new sorted list
             schedules.replace(Schedules::new());
@@ -122,8 +127,7 @@ pub fn schedule<F: FnOnce() + 'static + Send>(delay_ms: crate::Mseconds, functio
             // timer value ...
             SYS_TIMERCS::Register.write_value(SYS_TIMERCS::M1::MATCH);
             // and activate the timer interrupts to be dispatched
-            IRQ_MANAGER
-                .take_for(|mgr: &mut InterruptManager| mgr.activate(Interrupt::SystemTimer1));
+            irq::activate(Interrupt::SystemTimer1, None);
         }
 
         if let Some(ref mut schedules) = schedules.as_mut() {
@@ -146,12 +150,12 @@ pub fn schedule<F: FnOnce() + 'static + Send>(delay_ms: crate::Mseconds, functio
                 .insert(due, UnsafeCell::new(Some(Box::new(function))));
             // now that we have added the new function check if we need to adjust the already set match
             // value for the interrupt to be raised
-            let next_due = schedules.next_due.load(Ordering::Acquire);
+            let next_due = Duration::from_micros(schedules.next_due.load(Ordering::Acquire));
             // on first entry, when the current next due is after the new due
             // or when the current next_due is already in the past, set a new next due
-            if next_due == 0 || due < next_due || next_due < now().0 {
-                schedules.next_due.store(due, Ordering::Release);
-                SYS_TIMERC1::Register.set(due as u32);
+            if next_due.is_zero() || due < next_due || next_due < now() {
+                schedules.next_due.store(due.as_micros() as u64, Ordering::Release);
+                SYS_TIMERC1::Register.set(due.as_micros() as u32);
             };
         };
     });
@@ -159,7 +163,7 @@ pub fn schedule<F: FnOnce() + 'static + Send>(delay_ms: crate::Mseconds, functio
 
 /// Implement the timer interrupt handler for interrupt based timed execution
 #[IrqHandler(SystemTimer1)]
-fn timer_handler() {
+unsafe fn timer_handler(tx: Option<IsrSender<Box<dyn Any>>>) {
     // check which timer compare/match value has raised this interrupt, only care on number 1 ...
     if SYS_TIMERCS::Register.read(SYS_TIMERCS::M1) == 1 {
         // first acknowledge the timer interrupt by writing 1 to the match register value
@@ -167,7 +171,7 @@ fn timer_handler() {
         // use the list to find the the entry we should execute now, as it is sorted we start from
         // the front, the actual index into the list is atomically stored to ensure even we can not
         // have mutual exclusive access to the list
-        SCHEDULE.use_for(|schedules: &Option<Schedules>| {
+        SCHEDULE.with_ref(|schedules: &Option<Schedules>| {
             if let Some(ref schedules) = schedules {
                 let next_idx = schedules.due_index.fetch_add(1, Ordering::AcqRel);
                 if next_idx >= schedules.schedule_list.len() {
@@ -199,8 +203,8 @@ fn timer_handler() {
                     // this lead to a very tiny possibility that the next trigger value is not set
                     // properly. However, as scheduling is only possible with a minimal delay of 1ms
                     // this window, smaller than a micro-second should never occur
-                    SYS_TIMERC1::Register.set(*next_due as u32);
-                    schedules.next_due.store(*next_due, Ordering::SeqCst);
+                    SYS_TIMERC1::Register.set(next_due.as_micros() as u32);
+                    schedules.next_due.store(next_due.as_micros() as u64, Ordering::SeqCst);
                 }
                 // as we have executed this function and are don with all related updates we can update
                 // the index of the done functions

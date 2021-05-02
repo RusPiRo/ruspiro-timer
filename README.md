@@ -3,7 +3,7 @@
 This crate provides simple functions to pause execution on the current core for a given amount of time. It uses the
 free-running counter of the Raspberry Pi to provide micro second accurate pause timings.
 
-[![Travis-CI Status](https://api.travis-ci.org/RusPiRo/ruspiro-timer.svg?branch=master)](https://travis-ci.org/RusPiRo/ruspiro-timer)
+![CI](https://github.com/RusPiRo/ruspiro-timer/workflows/CI/badge.svg?branch=development)
 [![Latest Version](https://img.shields.io/crates/v/ruspiro-timer.svg)](https://crates.io/crates/ruspiro-timer)
 [![Documentation](https://docs.rs/ruspiro-timer/badge.svg)](https://docs.rs/ruspiro-timer)
 [![License](https://img.shields.io/crates/l/ruspiro-timer.svg)](https://github.com/RusPiRo/ruspiro-timer#license)
@@ -20,7 +20,7 @@ To use the crate just add the following dependency to your ``Cargo.toml`` file:
 
 ```toml
 [dependencies]
-ruspiro-timer = "0.4"
+ruspiro-timer = "||VERSION||"
 ```
 
 Once done the access to the timer functions is available in your rust files like so:
@@ -46,4 +46,5 @@ fn foo() {
 
 ## License
 
-Licensed under Apache License, Version 2.0, ([LICENSE](LICENSE) or [http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0))
+Licensed under Apache License, Version 2.0, ([LICENSE-APACHE](LICENSE-APACHE) or http://www.apache.org/licenses/LICENSE-2.0) or MIT ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)) at your choice.
+

@@ -8,18 +8,18 @@
 //! # Low-Level interface access to timer register
 //!
 
-use ruspiro_register::define_mmio_register;
+use ruspiro_mmio_register::define_mmio_register;
 
 // MMIO peripheral base address based on the target family provided with the custom target config file.
 #[cfg(feature = "ruspiro_pi3")]
-const PERIPHERAL_BASE: u32 = 0x3F00_0000;
+const PERIPHERAL_BASE: usize = 0x3F00_0000;
 
 // Base address of system timer MMIO register
 #[allow(dead_code)]
-const SYS_TIMER_BASE: u32 = PERIPHERAL_BASE + 0x3000;
+const SYS_TIMER_BASE: usize = PERIPHERAL_BASE + 0x3000;
 // Base address of ARM timer MMIO register
 #[allow(dead_code)]
-const ARM_TIMER_BASE: u32 = PERIPHERAL_BASE + 0xB000;
+const ARM_TIMER_BASE: usize = PERIPHERAL_BASE + 0xB000;
 
 // Define the MMIO timer register
 define_mmio_register![
@@ -57,6 +57,7 @@ define_mmio_register![
     pub SYS_TIMERC3<ReadWrite<u32>@(SYS_TIMER_BASE + 0x18)>,
 
     /// ARM timer load value that is put into the value register once it counted to 0
+    /// Writing to this register will immediately load the value into the counter
     pub ARM_TIMERLOAD<ReadWrite<u32>@(ARM_TIMER_BASE + 0x400)>,
     /// ARM timer current counter value
     pub ARM_TIMERVALUE<ReadOnly<u32>@(ARM_TIMER_BASE + 0x404)>,
@@ -111,8 +112,11 @@ define_mmio_register![
             ASSERTED = 1
         ]
     },
+    /// copy of the ARM timer load value register. But writing a value to this register does not trigger
+    /// immediate re-load of the timer value - it's only loaded once the counter reaches 0
+    pub ARM_TIMERRELOAD<ReadWrite<u32>@(ARM_TIMER_BASE + 0x418)>,
     /// ARM timer pre-devide value, timer_clock = apb_clock/(pre_devider + 1), default value = 0x7d (125), gives a divide by 126
-    pub ARM_TIMERPREDEV<ReadWrite<u32>@(ARM_TIMER_BASE + 0x41C)> {
+    pub ARM_TIMERPREDIV<ReadWrite<u32>@(ARM_TIMER_BASE + 0x41C)> {
         VALUE OFFSET(0) BITS(10)
     },
     /// ARM timer free running counter value
