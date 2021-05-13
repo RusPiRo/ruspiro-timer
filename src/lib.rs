@@ -27,25 +27,23 @@ mod interface;
 mod schedule;
 pub use schedule::schedule;
 
-use core::time::Duration;
-use ruspiro_arch_aarch64::instructions::nop;
+pub use core::time::Duration; // re-export Duration for convinence when using this crate
 use interface::*;
-
+use ruspiro_arch_aarch64::instructions::nop;
 
 /// Pause the current execution for the given amount of micro seconds
 /// # Example
 /// ```no_run
 /// # use ruspiro_timer::*;
-/// # use core::time::Duration;
 /// # fn doc() {
 /// // pause the execution for 1 second
 /// sleep(Duration::from_secs(1));
 /// # }
 /// ```
 pub fn sleep(duration: Duration) {
-    let wait_until = now() + duration;
+  let wait_until = now() + duration;
 
-    while !is_due(wait_until) {}
+  while !is_due(wait_until) {}
 }
 
 /// Pause the current execution for the given amount of CPU cycles
@@ -57,9 +55,9 @@ pub fn sleep(duration: Duration) {
 /// # }
 /// ```
 pub fn sleepcycles(cycles: u32) {
-    for _ in 0..cycles {
-        nop();
-    }
+  for _ in 0..cycles {
+    nop();
+  }
 }
 
 /// Get the current time as free running counter value of the system timer
@@ -71,10 +69,10 @@ pub fn sleepcycles(cycles: u32) {
 /// # }
 /// ```
 pub fn now() -> Duration {
-    let t_low = SYS_TIMERCLO::Register.get() as u64;
-    let t_high = SYS_TIMERCHI::Register.get() as u64;
+  let t_low = SYS_TIMERCLO::Register.get() as u64;
+  let t_high = SYS_TIMERCHI::Register.get() as u64;
 
-    Duration::from_micros((t_high << 32) | t_low)
+  Duration::from_micros((t_high << 32) | t_low)
 }
 
 /// Compare the given time as free running counter value with the current time.
@@ -90,11 +88,11 @@ pub fn now() -> Duration {
 /// # }
 /// ```
 fn is_due(time: Duration) -> bool {
-    if time == Duration::from_micros(0) {
-        // if no valid time is given, time is always due
-        true
-    } else {
-        // returns true if we have reached the current time (counter)
-        now() >= time
-    }
+  if time == Duration::from_micros(0) {
+    // if no valid time is given, time is always due
+    true
+  } else {
+    // returns true if we have reached the current time (counter)
+    now() >= time
+  }
 }

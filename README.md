@@ -26,8 +26,7 @@ ruspiro-timer = "||VERSION||"
 Once done the access to the timer functions is available in your rust files like so:
 
 ```rust
-use core::time::Duration
-use rusprio_timer:*;
+use rusprio_timer::*;
 
 fn foo() {
     sleep(Duration::from_millis(1)); // pause for 1 millisecond
@@ -38,7 +37,6 @@ fn foo() {
 Scheduling the execution of a function/closure is as simple as this:
 
 ```rust
-use core::time::Duration;
 use ruspiro_timer::*;
 
 fn foo() {
