@@ -23,13 +23,12 @@ jobs:
       - name: Install aarch64 gcc toolchain
         run: sudo apt-get install -y gcc-aarch64-linux-gnu
 
+      # install toolchain based on rust-toolchain file
       - name: Install Rust Nightly and Cargo
         uses: actions-rs/toolchain@v1
         with:
           profile: minimal
           override: true
-          components: rust-src, llvm-tools-preview
-          target: aarch64-unknown-none
 
       - name: Install Cargo Make
         uses: davidB/rust-cargo-make@v1
@@ -62,8 +61,6 @@ jobs:
         with:
           profile: minimal
           override: true
-          components: rust-src, llvm-tools-preview
-          target: aarch64-unknown-none
 
       - name: Install Cargo Make
         uses: davidB/rust-cargo-make@v1
@@ -151,8 +148,6 @@ jobs:
         with:
           profile: minimal
           override: true
-          components: rust-src, llvm-tools-preview
-          target: aarch64-unknown-none
 
       - name: Install Cargo Make
         uses: davidB/rust-cargo-make@v1
