@@ -23,7 +23,7 @@ jobs:
       - name: Install aarch64 gcc toolchain
         run: |
           sudo apt-get install -y gcc-aarch64-linux-gnu
-          sed -i -e 's/targets = []/targets=["aarch64-unknown-none"]/g' rust-toolchain
+          sed -i -e 's/^targets.*=.*\[\]/targets=\[\"aarch64-unknown-none\"\]/g' rust-toolchain
 
       # install toolchain based on rust-toolchain file
       - name: Install Rust Nightly and Cargo
@@ -58,7 +58,7 @@ jobs:
       - name: Install aarch64 gcc toolchain
         run: |
           sudo apt-get install -y gcc-aarch64-linux-gnu
-          sed -i -e 's/targets = []/targets=["aarch64-unknown-none"]/g' rust-toolchain
+          sed -i -e 's/^targets.*=.*\[\]/targets=\[\"aarch64-unknown-none\"\]/g' rust-toolchain
 
       - name: Install Rust Nightly and Cargo
         uses: actions-rs/toolchain@v1
@@ -147,7 +147,7 @@ jobs:
       - name: Install aarch64 gcc toolchain
         run: |
           sudo apt-get install -y gcc-aarch64-linux-gnu
-          sed -i -e 's/targets = []/targets=["aarch64-unknown-none"]/g' rust-toolchain
+          sed -i -e 's/^targets.*=.*\[\]/targets=\[\"aarch64-unknown-none\"\]/g' rust-toolchain
 
       - name: Install Rust Nightly and Cargo
         uses: actions-rs/toolchain@v1
