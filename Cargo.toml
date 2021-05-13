@@ -1,31 +1,31 @@
 [package]
 name = "ruspiro-timer"
 authors = ["André Borrmann <pspwizard@gmx.de>"]
-version = "0.4.1" # remember to update html_root_url
-description = "This crates provides simple timing functions to pause the current core for a specific amount of time."
+version = "0.5.0" # remember to update html_root_url
+description = """This crates provides simple timing functions to pause the current processing for a specific amount of time. The core pausing is called on will block."""
 license = "Apache-2.0"
-repository = "https://github.com/RusPiRo/ruspiro-timer/tree/v0.4.1"
-documentation = "https://docs.rs/ruspiro-timer/0.4.1"
+repository = "https://github.com/RusPiRo/ruspiro-timer/tree/v||VERSION||"
+documentation = "https://docs.rs/ruspiro-timer/||VERSION||"
 readme = "README.md"
 keywords = ["RusPiRo", "baremetal", "raspberrypi", "timer"]
 categories = ["no-std", "embedded"]
 edition = "2018"
 
 [badges]
-travis-ci = { repository = "RusPiRo/ruspiro-timer", branch = "master" }
 maintenance = { status = "actively-developed" }
 
 [lib]
 
 [dependencies]
-ruspiro-register = "0.4"
-ruspiro-interrupt = "0.3"
-ruspiro-singleton = "0.3"
+ruspiro-mmio-register = "~0.1.2"
+ruspiro-arch-aarch64 = "~0.1.4"
+ruspiro-interrupt = "~0.4.3"
+ruspiro-singleton = "~0.4.2"
 
 [features]
 ruspiro_pi3 = ["ruspiro-interrupt/ruspiro_pi3"]
 
 [patch.crates-io]
-ruspiro-register = { git = "https://github.com/RusPiRo/ruspiro-register.git" }
-ruspiro-interrupt = { git = "https://github.com/RusPiRo/ruspiro-interrupt.git" }
-ruspiro-singleton = { git = "https://github.com/RusPiRo/ruspiro-singleton.git" }
+ruspiro-register = { git = "https://github.com/RusPiRo/ruspiro-register.git", branch = "development" }
+ruspiro-interrupt = { git = "https://github.com/RusPiRo/ruspiro-interrupt.git", branch = "development" }
+ruspiro-singleton = { git = "https://github.com/RusPiRo/ruspiro-singleton.git", branch = "development" }
