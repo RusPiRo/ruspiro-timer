@@ -27,8 +27,8 @@ jobs:
       - name: Install Rust Nightly and Cargo
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: nightly-2021-04-24
-          profile: minimal
+          toolchain: "nightly-2021-04-24"
+          profile: "minimal"
           components: "rust-src", "llvm-tools-preview"
           target: "aarch64-unknown-none"
           override: true
@@ -62,8 +62,8 @@ jobs:
       - name: Install Rust Nightly and Cargo
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: nightly-2021-04-24
-          profile: minimal
+          toolchain: "nightly-2021-04-24"
+          profile: "minimal"
           components: "rust-src", "llvm-tools-preview"
           target: "aarch64-unknown-none"
           override: true
@@ -152,8 +152,8 @@ jobs:
       - name: Install Rust Nightly and Cargo
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: nightly-2021-04-24
-          profile: minimal
+          toolchain: "nightly-2021-04-24"
+          profile: "minimal"
           components: "rust-src", "llvm-tools-preview"
           target: "aarch64-unknown-none"
           override: true
