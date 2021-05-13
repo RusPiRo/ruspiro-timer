@@ -1,7 +1,7 @@
 [package]
 name = "ruspiro-timer"
 authors = ["André Borrmann <pspwizard@gmx.de>"]
-version = "0.5.0" # remember to update html_root_url
+version = "0.5.1" # remember to update html_root_url
 description = """This crates provides simple timing functions to pause the current processing for a specific amount of time. The core pausing is called on will block."""
 license = "Apache-2.0"
 repository = "https://github.com/RusPiRo/ruspiro-timer/tree/v||VERSION||"

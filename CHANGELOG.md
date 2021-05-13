@@ -1,5 +1,11 @@
 # Changelog
 
+## :peach: v0.5.1
+
+- ### :bulb: Features
+
+  - Re-export `Duration` type from `core::time` for convinience when using this crate.
+  
 ## :peach: v0.5.0
 
 - ### :wrench: Maintenance
