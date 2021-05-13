@@ -29,7 +29,7 @@ jobs:
         with:
           toolchain: nightly-2021-04-24
           profile: minimal
-          components: ["rust-src", "llvm-tools-preview"]
+          components: "rust-src", "llvm-tools-preview"
           target: "aarch64-unknown-none"
           override: true
 
@@ -64,7 +64,7 @@ jobs:
         with:
           toolchain: nightly-2021-04-24
           profile: minimal
-          components: ["rust-src", "llvm-tools-preview"]
+          components: "rust-src", "llvm-tools-preview"
           target: "aarch64-unknown-none"
           override: true
 
@@ -154,7 +154,7 @@ jobs:
         with:
           toolchain: nightly-2021-04-24
           profile: minimal
-          components: ["rust-src", "llvm-tools-preview"]
+          components: "rust-src", "llvm-tools-preview"
           target: "aarch64-unknown-none"
           override: true
 
