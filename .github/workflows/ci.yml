@@ -27,9 +27,8 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           profile: minimal
-          toolchain: nightly
           override: true
-          components: rustfmt, clippy, rust-src, llvm-tools-preview
+          components: rust-src, llvm-tools-preview
           target: aarch64-unknown-none
 
       - name: Install Cargo Make
@@ -62,9 +61,8 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           profile: minimal
-          toolchain: nightly
           override: true
-          components: rustfmt, clippy, rust-src, llvm-tools-preview
+          components: rust-src, llvm-tools-preview
           target: aarch64-unknown-none
 
       - name: Install Cargo Make
@@ -152,9 +150,8 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           profile: minimal
-          toolchain: nightly
           override: true
-          components: rustfmt, clippy, rust-src, llvm-tools-preview
+          components: rust-src, llvm-tools-preview
           target: aarch64-unknown-none
 
       - name: Install Cargo Make
