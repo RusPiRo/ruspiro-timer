@@ -4,48 +4,46 @@
  * Author: André Borrmann
  * License: Apache License 2.0
  **************************************************************************************************/
-#![doc(html_root_url = "https://docs.rs/ruspiro-timer/0.4.1")]
+#![doc(html_root_url = "https://docs.rs/ruspiro-timer/||VERSION||")]
 #![cfg_attr(not(any(test, doctest)), no_std)]
 #![feature(llvm_asm)]
 //! # Timer functions
 //!
-//! This crate provides simple timing functions to pause the actual core for a specific amount of time.
+//! This crate provides simple timing functions to pause the actual processing for a specific amount of time. The core
+//! pausing is called on will block.
+//!
 //! It is also possible to delay function/closure execution. This is based on system timer interrupts.
 //!
 //!
 //! # Features
-//! Feature         | Description
-//! ----------------|------------------------------------------------------------------------------
-//! ``ruspiro_pi3`` | active to use the proper timer MMIO base memory address for Raspberry Pi 3 when accessing the system timer peripheral
+//! Feature       | Description
+//! --------------|------------------------------------------------------------------------------
+//! `ruspiro_pi3` | active to use the proper timer MMIO base memory address for Raspberry Pi 3 when accessing the system timer peripheral
 //!
 
-use ruspiro_register::system::nop;
+extern crate alloc;
 
 mod interface;
-use interface::*;
-
 mod schedule;
 pub use schedule::schedule;
 
-/// Type representing micro-seconds
-#[derive(Copy, Clone)]
-pub struct Useconds(pub u64);
+use core::time::Duration;
+use ruspiro_arch_aarch64::instructions::nop;
+use interface::*;
 
-/// Type representing milli-seconds
-#[derive(Copy, Clone)]
-pub struct Mseconds(pub u64);
 
 /// Pause the current execution for the given amount of micro seconds
 /// # Example
 /// ```no_run
 /// # use ruspiro_timer::*;
+/// # use core::time::Duration;
 /// # fn doc() {
 /// // pause the execution for 1 second
-/// sleep(Useconds(1_000_000));
+/// sleep(Duration::from_secs(1));
 /// # }
 /// ```
-pub fn sleep(usec: Useconds) {
-    let wait_until = Useconds(now().0 + usec.0);
+pub fn sleep(duration: Duration) {
+    let wait_until = now() + duration;
 
     while !is_due(wait_until) {}
 }
@@ -65,21 +63,38 @@ pub fn sleepcycles(cycles: u32) {
 }
 
 /// Get the current time as free running counter value of the system timer
-pub fn now() -> Useconds {
+/// # Example
+/// ```no_run
+/// # use ruspiro_timer::*;
+/// # fn doc() {
+/// let now = now();
+/// # }
+/// ```
+pub fn now() -> Duration {
     let t_low = SYS_TIMERCLO::Register.get() as u64;
     let t_high = SYS_TIMERCHI::Register.get() as u64;
 
-    Useconds((t_high << 32) | t_low)
+    Duration::from_micros((t_high << 32) | t_low)
 }
 
 /// Compare the given time as free running counter value with the current time.
 /// Returns true if the current time is later than the time passed into this function.
-fn is_due(time: Useconds) -> bool {
-    if time.0 == 0 {
+/// # Example
+/// ```no_run
+/// # use ruspiro_timer::*;
+/// # fn doc() {
+/// let due_time = now() + Duration::from_secs(100);
+/// if is_due(due_time) {
+///     println!("Time is due :)");    
+/// }
+/// # }
+/// ```
+fn is_due(time: Duration) -> bool {
+    if time == Duration::from_micros(0) {
         // if no valid time is given, time is always due
         true
     } else {
         // returns true if we have reached the current time (counter)
-        now().0 >= time.0
+        now() >= time
     }
 }
