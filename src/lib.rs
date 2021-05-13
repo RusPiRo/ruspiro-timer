@@ -36,9 +36,10 @@ use interface::*;
 /// # Example
 /// ```no_run
 /// # use ruspiro_timer::*;
+/// # use core::time::Duration;
 /// # fn doc() {
 /// // pause the execution for 1 second
-/// sleep(Useconds(1_000_000));
+/// sleep(Duration::from_secs(1));
 /// # }
 /// ```
 pub fn sleep(duration: Duration) {
@@ -62,6 +63,13 @@ pub fn sleepcycles(cycles: u32) {
 }
 
 /// Get the current time as free running counter value of the system timer
+/// # Example
+/// ```no_run
+/// # use ruspiro_timer::*;
+/// # fn doc() {
+/// let now = now();
+/// # }
+/// ```
 pub fn now() -> Duration {
     let t_low = SYS_TIMERCLO::Register.get() as u64;
     let t_high = SYS_TIMERCHI::Register.get() as u64;
@@ -71,6 +79,16 @@ pub fn now() -> Duration {
 
 /// Compare the given time as free running counter value with the current time.
 /// Returns true if the current time is later than the time passed into this function.
+/// # Example
+/// ```no_run
+/// # use ruspiro_timer::*;
+/// # fn doc() {
+/// let due_time = now() + Duration::from_secs(100);
+/// if is_due(due_time) {
+///     println!("Time is due :)");    
+/// }
+/// # }
+/// ```
 fn is_due(time: Duration) -> bool {
     if time == Duration::from_micros(0) {
         // if no valid time is given, time is always due

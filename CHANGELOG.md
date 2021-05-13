@@ -6,6 +6,7 @@
 
   - Migrate the build pipeline to github actions
   - update versions of dependent crates
+
 - ### :bulb: Features
 
   - Use the `Duration` type from `core::time` module instead of custom duration type.

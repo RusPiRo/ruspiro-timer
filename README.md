@@ -26,10 +26,11 @@ ruspiro-timer = "||VERSION||"
 Once done the access to the timer functions is available in your rust files like so:
 
 ```rust
+use core::time::Duration
 use rusprio_timer:*;
 
 fn foo() {
-    sleep(Useconds(1_000)); // pause for 1 millisecond
+    sleep(Duration::from_millis(1)); // pause for 1 millisecond
     sleepcycles(200); // pause for 200 CPU cycles
 }
 ```
@@ -37,14 +38,15 @@ fn foo() {
 Scheduling the execution of a function/closure is as simple as this:
 
 ```rust
+use core::time::Duration;
 use ruspiro_timer::*;
 
 fn foo() {
-    schedule(Mseconds(100), || println!("delayed execution")); // print after 100 milliseconds
+    // print after 100 milliseconds
+    schedule(Duration:from_millis(100), || println!("delayed execution"));
 }
 ```
 
 ## License
 
 Licensed under Apache License, Version 2.0, ([LICENSE-APACHE](LICENSE-APACHE) or http://www.apache.org/licenses/LICENSE-2.0) or MIT ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)) at your choice.
-
