@@ -6,7 +6,6 @@
  **************************************************************************************************/
 #![doc(html_root_url = "https://docs.rs/ruspiro-timer/||VERSION||")]
 #![cfg_attr(not(any(test, doctest)), no_std)]
-#![feature(llvm_asm)]
 //! # Timer functions
 //!
 //! This crate provides simple timing functions to pause the actual processing for a specific amount of time. The core
