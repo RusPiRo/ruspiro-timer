@@ -1,5 +1,15 @@
 # Changelog
 
+## :melon: v0.5.2
+
+This is a maintenance release ensuring successful build with the latest nightly (2021-09-05) version of Rust.
+
+- ### :wrench: Maintenance
+
+  - build the current crate with the latest nightly Rust version
+  - bump the dependency versions
+  - remove the unsused `llvm_asm` feature
+
 ## :peach: v0.5.1
 
 - ### :bulb: Features
