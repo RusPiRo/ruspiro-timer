@@ -13,9 +13,9 @@ use ruspiro_mmio_register::define_mmio_register;
 // MMIO peripheral base address based on the target family provided with the custom target config file.
 #[cfg(feature = "pi3")]
 const PERIPHERAL_BASE: usize = 0x0_3F00_0000;
-#[cfg(feature = "pi4_lowperi")]
+#[cfg(feature = "pi4_low")]
 const PERIPHERAL_BASE: usize = 0x0_FE00_0000;
-#[cfg(feature = "pi4_highperi")]
+#[cfg(feature = "pi4_high")]
 const PERIPHERAL_BASE: usize = 0x4_7E00_0000;
 
 // Base address of system timer MMIO register
