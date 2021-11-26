@@ -10,9 +10,11 @@ free-running counter of the Raspberry Pi to provide micro second accurate pause 
 
 ## Features
 
-Feature         | Description
-----------------|------------------------------------------------------------------------------
-``ruspiro_pi3`` | active to use the proper timer MMIO base memory address for Raspberry Pi 3 when accessing the system timer peripheral
+Feature    | Description
+-----------|------------------------------------------------------------------------------
+`pi3`      | active to use the proper timer MMIO base memory address for Raspberry Pi 3 when accessing the system timer peripheral
+`pi4_low`  | active to use the proper timer MMIO base memory address for Raspberry Pi 4 in Low-Peripheral mode when accessing the system timer peripheral
+`pi4_high` | active to use the proper timer MMIO base memory address for Raspberry Pi 4 in High-Peripheral mode when accessing the system timer peripheral
 
 ## Usage
 
