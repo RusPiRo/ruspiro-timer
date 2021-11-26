@@ -175,5 +175,7 @@ jobs:
           # and the README.md
           sed -i -e 's/||VERSION||/'$CRATE_VERSION'/g' README.md
         
-      - name: Publish-Dry-Run
-        run: cargo make publish --env CRATES_TOKEN=${{ secrets.CRATES_TOKEN }} --profile pipeline
+      - name: Publish-Run
+        env:
+          CRATES_TOKEN: ${{ secrets.CRATES_TOKEN }}
+        run: cargo make --profile pipeline publish 

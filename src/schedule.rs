@@ -166,7 +166,7 @@ pub fn schedule<F: FnOnce() + 'static + Send>(delay: Duration, function: F) {
 
 /// Implement the timer interrupt handler for interrupt based timed execution
 #[IrqHandler(SystemTimer1)]
-unsafe fn timer_handler(tx: Option<IsrSender<Box<dyn Any>>>) {
+unsafe fn timer_handler(channel: Option<IsrSender<Box<dyn Any>>>) {
   // check which timer compare/match value has raised this interrupt, only care on number 1 ...
   if SYS_TIMERCS::Register.read(SYS_TIMERCS::M1) == 1 {
     // first acknowledge the timer interrupt by writing 1 to the match register value

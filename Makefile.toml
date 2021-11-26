@@ -21,17 +21,21 @@ command = "cargo"
 args = ["build", "--release", "--features", "${FEATURES}"]
 
 [tasks.clippy]
-env = { FEATURES = "ruspiro_pi3" }
+env = { FEATURES = "pi3" }
 command = "cargo"
 args = ["clippy", "--features", "${FEATURES}"]
 
 [tasks.doc]
-env = { FEATURES = "ruspiro_pi3" }
+env = { FEATURES = "pi3" }
 command = "cargo"
 args = ["doc", "--features", "${FEATURES}", "--open"]
 
 [tasks.pi3]
-env = { FEATURES = "ruspiro_pi3" }
+env = { FEATURES = "pi3" }
+run_task = "build"
+
+[tasks.pi4]
+env = { FEATURES = "pi4_lowperi" }
 run_task = "build"
 
 [tasks.clean]
@@ -39,11 +43,11 @@ command = "cargo"
 args = ["clean"]
 
 [tasks.publish_dry]
-env = { FEATURES = "ruspiro_pi3" }
+env = { FEATURES = "pi3" }
 command = "cargo"
 args = ["publish", "--dry-run", "--features", "${FEATURES}"]
 
 [tasks.publish]
-env = { FEATURES = "ruspiro_pi3" }
+env = { FEATURES = "pi3" }
 command = "cargo"
 args = ["publish", "--token", "${CRATES_TOKEN}", "--allow-dirty", "--features", "${FEATURES}"]

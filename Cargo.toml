@@ -23,7 +23,9 @@ ruspiro-interrupt = "~0.4.3"
 ruspiro-singleton = "~0.4.3"
 
 [features]
-ruspiro_pi3 = ["ruspiro-interrupt/ruspiro_pi3"]
+pi3 = ["ruspiro-interrupt/pi3"]
+pi4_lowperi = ["ruspiro-interrupt/pi4_lowperi"]
+pi4_highperi = ["ruspiro-interrupt/pi4_highperi"]
 
 [patch.crates-io]
 ruspiro-register = { git = "https://github.com/RusPiRo/ruspiro-register.git", branch = "development" }
