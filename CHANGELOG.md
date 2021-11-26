@@ -1,5 +1,17 @@
 # Changelog
 
+## :cat: v0.6.0
+
+Introduce the MMIO address mapping to support also Raspberry 4 as a target for this crate.
+
+- ### :bulb: Features
+
+  - add features `pi4_low` and `pi4_high` to compile for Raspberry Pi 4 model
+
+- ### :wrench: Maintenance
+
+  - rename `ruspiro_pi3` feature to `pi3`
+
 ## :melon: v0.5.2
 
 This is a maintenance release ensuring successful build with the latest nightly (2021-09-05) version of Rust.

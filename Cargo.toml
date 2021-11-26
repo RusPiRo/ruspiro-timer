@@ -1,9 +1,9 @@
 [package]
 name = "ruspiro-timer"
 authors = ["André Borrmann <pspwizard@gmx.de>"]
-version = "0.5.2" # remember to update html_root_url
+version = "0.6.0" # remember to update html_root_url
 description = """This crates provides simple timing functions to pause the current processing for a specific amount of time. The core pausing is called on will block."""
-license = "Apache-2.0"
+license = "Apache-2.0 OR MIT"
 repository = "https://github.com/RusPiRo/ruspiro-timer/tree/v||VERSION||"
 documentation = "https://docs.rs/ruspiro-timer/||VERSION||"
 readme = "README.md"
@@ -19,11 +19,13 @@ maintenance = { status = "actively-developed" }
 [dependencies]
 ruspiro-mmio-register = "~0.1.3"
 ruspiro-arch-aarch64 = "~0.1.5"
-ruspiro-interrupt = "~0.4.3"
+ruspiro-interrupt = "~0.5.0"
 ruspiro-singleton = "~0.4.3"
 
 [features]
-ruspiro_pi3 = ["ruspiro-interrupt/ruspiro_pi3"]
+pi3 = ["ruspiro-interrupt/pi3"]
+pi4_low = ["ruspiro-interrupt/pi4_low"]
+pi4_high = ["ruspiro-interrupt/pi4_high"]
 
 [patch.crates-io]
 ruspiro-register = { git = "https://github.com/RusPiRo/ruspiro-register.git", branch = "development" }

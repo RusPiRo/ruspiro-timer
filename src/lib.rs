@@ -20,6 +20,9 @@
 //! `ruspiro_pi3` | active to use the proper timer MMIO base memory address for Raspberry Pi 3 when accessing the system timer peripheral
 //!
 
+#[cfg(not(any(feature = "pi3", feature = "pi4_low", feature = "pi4_high")))]
+compile_error!("Either feature \"pi3\", \"pi4_low\" or \"pi4_high\" must be enabled for this crate");
+
 extern crate alloc;
 
 mod interface;
