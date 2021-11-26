@@ -10,7 +10,7 @@ CFLAGS = "-march=armv8-a -Wall -O3 -nostdlib -nostartfiles -ffreestanding -mtune
 RUSTFLAGS = "-C linker=${CC} -C target-cpu=cortex-a53 -C link-arg=-nostartfiles -C link-arg=-T./link64.ld"
 
 # AARCH64 specific Travis CI env. variables. "aarch64-none-elf" is not available there as it seems
-[env.travis]
+[env.pipeline]
 CC = "aarch64-linux-gnu-gcc"
 AR = "aarch64-linux-gnu-ar"
 CFLAGS = "-march=armv8-a -Wall -O3 -nostdlib -nostartfiles -ffreestanding -mtune=cortex-a53"
@@ -29,14 +29,6 @@ args = ["clippy", "--features", "${FEATURES}"]
 env = { FEATURES = "pi3" }
 command = "cargo"
 args = ["doc", "--features", "${FEATURES}", "--open"]
-
-[tasks.pi3]
-env = { FEATURES = "pi3" }
-run_task = "build"
-
-[tasks.pi4]
-env = { FEATURES = "pi4_lowperi" }
-run_task = "build"
 
 [tasks.clean]
 command = "cargo"

@@ -14,6 +14,9 @@ jobs:
   build:
     name: Compile The Crate
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform: [pi3, pi4_low, pi4_high]
 
     steps:
       # Checkout the current code from github into the CI machine
@@ -45,7 +48,9 @@ jobs:
           cat Cargo.toml
 
       - name: Compile
-        run: cargo make pi3 --profile pipeline
+        env:
+          FEATURES: ${{ matrix.platform }}
+        run: cargo make -t build --profile pipeline
 
   publish_dry:
     name: Run Cargo Publish Dry-Run
@@ -74,7 +79,7 @@ jobs:
           version: 'latest'
         
       - name: Publish-Dry-Run
-        run: cargo make publish_dry --profile pipeline
+        run: cargo make -t publish_dry --profile pipeline
 
   prepare_release:
     needs: [build, publish_dry]
@@ -178,4 +183,4 @@ jobs:
       - name: Publish-Run
         env:
           CRATES_TOKEN: ${{ secrets.CRATES_TOKEN }}
-        run: cargo make --profile pipeline publish 
+        run: cargo make -t publish --profile pipeline 
